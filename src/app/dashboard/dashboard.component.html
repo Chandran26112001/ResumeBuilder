@@ -1,0 +1,24 @@
+<script>
+    // Check if the URL contains a specific parameter
+    if (window.location.search.includes('https://www.splashchemicals.in/check/api/login/callback')) {
+      // Close the popup window
+      window.close();
+    }
+</script>
+<mat-toolbar class="toolbar">
+    <div class="content-left">
+        <button mat-icon-button class="menu">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <p>Resume Builder</p>
+    </div>
+    
+    <div class="buttons-right">
+        <div>
+            <button (click)="onLogin()" class="login-button" mat-raised-button>Login</button>
+        </div>
+        <div>
+            <button  mat-raised-button>About Us</button>
+        </div>
+    </div>
+</mat-toolbar>

@@ -1,0 +1,332 @@
+<app-dashboard></app-dashboard>
+
+<!-- <form [formGroup]="dummyForm">
+  <ng-container formArrayName="dummyFormArray">
+    <mat-form-field *ngFor="let desc of dummyFormArray.controls; let k = index"  >
+      <mat-label>sunni: </mat-label> 
+      <input [formControlName]="k" matInput>
+    </mat-form-field>
+  </ng-container>
+</form> -->
+
+<mat-stepper orientation="vertical" [linear]="isLinear" #stepper>
+    <mat-step [stepControl]="profileForm" errorMessage="Oops, Profile section is mandatory.">
+      <div class="form-1">
+        <form [formGroup]="profileForm">
+          <ng-template matStepLabel>Profile Details</ng-template>
+          <mat-form-field>
+            <mat-label>First Name: </mat-label>
+            <input formControlName="first_name" matInput type="text">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Last Name: </mat-label>
+            <input formControlName="last_name" matInput type="text">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Location: (City, Country) </mat-label>
+            <input formControlName="location" matInput type="text">
+            <div class="error-text" *ngIf="profileForm.get('location')!.hasError('pattern')">
+              <p>Ex. Chennai, India </p>
+            </div>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Mobile Number: </mat-label>
+            <input formControlName="phone" matInput type="text">
+            <div class="error-text" *ngIf="profileForm.get('phone')!.hasError('pattern')">
+              <p>Enter a valid mobile number. </p>
+            </div>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Email Address: </mat-label>
+            <input formControlName="email" matInput type="text">
+            <div class="error-text" *ngIf="profileForm.get('email')!.hasError('email')">
+              <p>Enter a valid email address. </p>
+            </div>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>LinkedIn Username: </mat-label>
+            <input formControlName="linkedin_username" matInput type="text">
+          </mat-form-field>
+          <div>
+            <button mat-button matStepperNext (click)="profileFormNext()">Next</button>
+          </div>
+        </form>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="educationForm[0]" errorMessage="Oops, Education section is mandatory.">
+      <div *ngFor="let currEducationForm of educationForm; let i=index" class="education-forms">
+        <div>
+          <form [formGroup]="currEducationForm">
+            <ng-template matStepLabel>Education Details</ng-template>
+            <mat-form-field>
+              <mat-label>Institution Name: </mat-label>
+              <input matInput formControlName="institution" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Location: (City, Country) </mat-label>
+              <input matInput formControlName="location" required>
+              <div class="error-text" *ngIf="currEducationForm.get('location')!.hasError('pattern')">
+                <p>Ex. Chennai, India </p>
+              </div>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Degree: </mat-label>
+              <input matInput formControlName="degree" placeholder="Ex. B.Tech Fashion Tech" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Start Date: </mat-label>
+              <input formControlName="startDate" matInput [matDatepicker]="dp2_1" placeholder="Select a Date" (click)="openDatePicker(dp2_1)">
+              <mat-datepicker-toggle matSuffix [for]="dp2_1"></mat-datepicker-toggle>
+              <mat-datepicker #dp2_1 startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>End Date: </mat-label> 
+              <input formControlName="endDate" matInput [matDatepicker]="dp2_2" placeholder="Select a Date" (click)="openDatePicker(dp2_2)">
+              <mat-datepicker-toggle matSuffix [for]="dp2_2"></mat-datepicker-toggle>
+              <mat-datepicker #dp2_2 startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+          </form>
+          <button *ngIf="canDeleteEducationForm" mat-icon-button (click)="removeEducationForm(i)" class="delete-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <hr *ngIf="canDeleteEducationForm" width="100%" size="2">
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="educationFormNext()" >Next</button>
+        <button mat-button (click)="addEducationFormGroup()" >Add another</button>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="experienceForm[0]" errorMessage="Oops, Experience section is mandatory.">
+      <div *ngFor="let currExperienceForm of experienceForm; let i=index" class="experience-forms">
+        <div>
+          <form [formGroup]="currExperienceForm">
+            <ng-template matStepLabel>Experience Details</ng-template>
+            <mat-form-field>
+              <mat-label>Role: </mat-label>
+              <input matInput formControlName="role" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Company: </mat-label>
+              <input matInput formControlName="company" placeholder="Ex. TCS" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Location: (City, Country) </mat-label>
+              <input matInput formControlName="location" required>
+              <div class="error-text" *ngIf="currExperienceForm.get('location')!.hasError('pattern')">
+                <p>Ex. Chennai, India </p>
+              </div>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Start Date: </mat-label>
+              <input formControlName="startDate" matInput [matDatepicker]="dp2_1" placeholder="Select a Date" (click)="openDatePicker(dp2_1)">
+              <mat-datepicker-toggle matSuffix [for]="dp2_1"></mat-datepicker-toggle>
+              <mat-datepicker #dp2_1 startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>End Date: </mat-label> 
+              <input formControlName="endDate" matInput [matDatepicker]="dp2_2" placeholder="Select a Date" (click)="openDatePicker(dp2_2)">
+              <mat-datepicker-toggle matSuffix [for]="dp2_2"></mat-datepicker-toggle>
+              <mat-datepicker #dp2_2 startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+            <div class="description-and-add" >
+              <ng-container *ngFor="let desc of getExperienceDescription(i).controls; let j = index" formArrayName="description">
+                <div class="description-input">
+                  <mat-form-field class="description-input-field" >
+                    <mat-label>{{'Description Line: ' + (j+1)}}</mat-label> 
+                    <input [placeholder]="'Description Line: ' + (j+1)" [formControlName]="j" matInput>
+                  </mat-form-field>
+                  <button *ngIf="j==0" (click)="addExperienceDescription(i)" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button *ngIf="j!=0" (click)="removeExperienceDescription(i,j)" mat-icon-button>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+          </form>
+          <button *ngIf="canDeleteExperienceForm" mat-icon-button (click)="removeExperienceForm(i)" class="delete-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <hr *ngIf="canDeleteExperienceForm" width="100%" size="2">
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="experienceFormNext()" >Next</button>
+        <button mat-button (click)="addExperienceFormGroup()" >Add another</button>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="projectForm[0]" errorMessage="Oops, Project section is mandatory.">
+      <div *ngFor="let currProjectForm of projectForm; let i=index" class="project-forms">
+        <div>
+          <form [formGroup]="currProjectForm">
+            <ng-template matStepLabel>Project Details</ng-template>
+            <mat-form-field>
+              <mat-label>Name: </mat-label>
+              <input matInput formControlName="name" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Start Date: </mat-label>
+              <input formControlName="startDate" matInput [matDatepicker]="dp2_1" placeholder="Select a Date" (click)="openDatePicker(dp2_1)">
+              <mat-datepicker-toggle matSuffix [for]="dp2_1"></mat-datepicker-toggle>
+              <mat-datepicker #dp2_1 startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>End Date: </mat-label> 
+              <input formControlName="endDate" matInput [matDatepicker]="dp2_2" placeholder="Select a Date" (click)="openDatePicker(dp2_2)">
+              <mat-datepicker-toggle matSuffix [for]="dp2_2"></mat-datepicker-toggle>
+              <mat-datepicker #dp2_2 startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+            <div class="description-and-add" >
+              <ng-container *ngFor="let desc of getProjectDescription(i).controls; let j = index" formArrayName="description">
+                <div class="description-input">
+                  <mat-form-field class="description-input-field" >
+                    <mat-label>{{'Description Line: ' + (j+1)}}</mat-label> 
+                    <input [placeholder]="'Description Line: ' + (j+1)" [formControlName]="j" matInput>
+                  </mat-form-field>
+                  <button *ngIf="j==0" (click)="addProjectDescription(i)" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button *ngIf="j!=0" (click)="removeProjectDescription(i,j)" mat-icon-button>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+          </form>
+          <button *ngIf="canDeleteProjectForm" mat-icon-button (click)="removeProjectForm(i)" class="delete-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <hr *ngIf="canDeleteProjectForm" width="100%" size="2">
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="projectFormNext()" >Next</button>
+        <button mat-button (click)="addProjectFormGroup()" >Add another</button>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="skillForm[0]" errorMessage="Oops, Skills section is mandatory.">
+      <div *ngFor="let currSkillForm of skillForm; let i=index" class="skill-forms">
+        <div>
+          <form [formGroup]="currSkillForm">
+            <ng-template matStepLabel>Skills Details</ng-template>
+            <mat-form-field class="mat-option-field">
+              <mat-select formControlName="skill" placeholder="Favorite food">
+                <mat-option class="mat-option-dropdown" *ngFor="let skillItem of skillItems"  [value]="skillItem">
+                  {{ skillItem }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Skill Name: </mat-label> 
+              <input formControlName="value" matInput>
+            </mat-form-field>
+          </form>
+          <button *ngIf="canDeleteSkillForm" mat-icon-button (click)="removeSkillForm(i)" class="delete-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <hr *ngIf="canDeleteSkillForm" width="100%" size="2">
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="skillFormNext()" >Next</button>
+        <button mat-button (click)="addSkillFormGroup()" >Add another</button>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="achievementForm[0]" errorMessage="Oops, Achievements section is mandatory.">
+      <div *ngFor="let currAchievementForm of achievementForm; let i=index" class="achievement-forms">
+        <div>
+          <form [formGroup]="currAchievementForm">
+            <ng-template matStepLabel>Achievements Details</ng-template>
+            <mat-form-field>
+              <mat-label>Achievement Name: </mat-label> 
+              <input formControlName="name" matInput>
+            </mat-form-field>
+            <div class="description-and-add" >
+              <ng-container *ngFor="let desc of getAchievementDescription(i).controls; let j = index" formArrayName="description">
+                <div class="description-input">
+                  <mat-form-field class="description-input-field" >
+                    <mat-label>{{'Description Line: ' + (j+1)}}</mat-label> 
+                    <input [placeholder]="'Description Line: ' + (j+1)" [formControlName]="j" matInput>
+                  </mat-form-field>
+                  <button *ngIf="j==0" (click)="addAchievementDescription(i)" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button *ngIf="j!=0" (click)="removeAchievementDescription(i,j)" mat-icon-button>
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+          </form>
+          <button *ngIf="canDeleteAchievementForm" mat-icon-button (click)="removeAchievementForm(i)" class="delete-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <hr *ngIf="canDeleteAchievementForm" width="100%" size="2">
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="achievementFormNext()" >Next</button>
+        <button mat-button (click)="addAchievementFormGroup()" >Add another</button>
+      </div>
+    </mat-step>
+
+    <mat-step [stepControl]="profileLinkForm[0]" errorMessage="Oops, Profile Link section is mandatory.">
+      <div *ngFor="let currProfileLinkForm of profileLinkForm; let i=index" class="profileLink-forms">
+        <div>
+          <form [formGroup]="currProfileLinkForm">
+            <ng-template matStepLabel>ProfileLinks Details</ng-template>
+            <mat-form-field>
+              <mat-label>Platform Name</mat-label> 
+              <input formControlName="platform" matInput placeholder="Ex. Github">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>URL: </mat-label> 
+              <input formControlName="url" matInput>
+            </mat-form-field>
+          </form>
+          <button *ngIf="canDeleteProfileLinkForm" mat-icon-button (click)="removeProfileLinkForm(i)" class="delete-btn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div>
+          <hr *ngIf="canDeleteProfileLinkForm" width="100%" size="2">
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="profileLinkFormNext()" >Next</button>
+        <button mat-button (click)="addProfileLinkFormGroup()" >Add another</button>
+      </div>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button (click)="seePreview()">See Preview</button>
+      </div>
+    </mat-step>
+  </mat-stepper>

@@ -1,0 +1,26 @@
+<div class="home">
+    <div class="header">
+        <app-dashboard></app-dashboard>
+    </div>
+    <div class="body">
+        <div  class="content-left">
+            <p class="content-text">Build Your Dream Resume.<br> Hassle-Free.</p>
+        </div>
+        <div fxShow.xs="false" fxShow.gt-xs="true" class="content-right">
+            <button routerLink="form1" (click)="onBuildResume()"  mat-raised-button>Build Resume</button>
+            <button  mat-raised-button>Edit Resume</button>
+        </div>
+    </div>
+    <div class="body-2">
+        <div fxShow.xs="true" fxShow.gt-xs="false" class="content-right">
+            <button routerLink="form1" (click)="onBuildResume()"  mat-raised-button>Build Resume</button>
+            <button  mat-raised-button>Edit Resume</button>
+        </div>
+    </div>
+    <div class="footer">
+        <p>Resume Builder. All rights reserved.</p>
+    </div>
+</div>
+
+
+

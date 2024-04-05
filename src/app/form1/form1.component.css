@@ -1,0 +1,42 @@
+.error-text{
+    color: green;
+    margin-bottom: 20px;
+}
+.form-1{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+mat-form-field{
+    margin-right: 10px;
+}
+.education-forms{
+    display: flex;
+    flex-direction: column;
+}
+.education-form-whole{
+    display: flex;
+}
+hr{
+    margin-bottom: 15px;
+}
+.description-input{
+    min-width: 80vw;
+    display: flex;
+    /* min-height: 200px; */
+}
+.description-input-field{
+    display: flex;
+    flex: 1;
+}
+.mat-option-dropdown{
+    font-family: 'MyFont';
+}
+.mat-option-field{
+}
+
+.description-and-add{
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
