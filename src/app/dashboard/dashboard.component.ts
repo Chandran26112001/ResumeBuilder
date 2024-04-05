@@ -17,9 +17,6 @@ export class DashboardComponent {
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
     const url = 'https://splashchemicals.in/check/api/login/redirect';
-    // console.log('b4')
-    // this.sleep(5000)
-    // console.log('after')
     const authWindow = window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
     // console.log(authWindow)
     // authWindow?.close()
