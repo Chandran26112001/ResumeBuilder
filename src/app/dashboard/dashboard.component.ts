@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+declare var google: any;
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -6,84 +8,53 @@ import { Subject } from 'rxjs';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
-  sleep(delay: number) {
-    var start = new Date().getTime();
-    while (new Date().getTime() < start + delay);
- }
-  onLogin(){
-    const width = 600;
-    const height = 600;
-    const left = window.innerWidth / 2 - width / 2;
-    const top = window.innerHeight / 2 - height / 2;
-    const url = 'https://splashchemicals.in/check/api/login/redirect';
-    const authWindow = window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);
-    // console.log(authWindow)
-    // authWindow?.close()
-    // console.log('before timer')
-    // setTimeout(()=>{
-    //   console.log('inside timer')
-    //   console.log(authWindow)
-    //   //authWindow?.close()
-    //   console.log('after timer')
-    //   console.log(authWindow)
-    // }, 250)
-
-    // const signInCheckInterval = setInterval(()=>{
-    //   console.log('fdfdfdf'+authWindow?.location.href)
-    //   if(authWindow?.closed){
-    //     clearInterval(signInCheckInterval)
-    //   }
-    //   else{
-    //     try{
-    //       if(window?.location.href.includes('callback')){
-    //         localStorage.setItem('sunni', 'umbu')
-    //         authWindow!.close()
-    //         clearInterval(signInCheckInterval)
-    //       }
-    //     }
-    //     catch(error){
-    //       console.log(error)
-    //     }
-    //   }
-    // }, 5);
-    // console.log(authWindow?.location.href)
-    // authWindow?.postMessage('hello from auth window')
-    // window.addEventListener('message', (event)=>{
-    //   console.log('inside event listener');
-    //   if(event.data === 'token'){
-    //     authWindow?.close()
-    //   }
-    // })
-
-    const authObservable = new Subject<any>();
-    console.log('kk');
-    const windowListener = (event: MessageEvent) => {
-      console.log(event.data);
-      if (event.origin === window.location.origin) {
-        console.log('inside')
-        // Check if the message contains authentication data
-        if (event.data.type === 'authResult') {
-          authWindow?.close();
-          authObservable.next(event.data.payload);
-          authObservable.complete();
-          window.removeEventListener('message', windowListener);
-        }
-      }
-    };
-
-    // Add event listener to listen for messages from the popup window
-    authWindow?.addEventListener('message', windowListener);
-    authObservable.asObservable().subscribe(
-      (payload) => {
-        // Handle successful authentication
-        console.log('Authenticated', payload);
+export class DashboardComponent implements OnInit{
+  constructor(public http: HttpClient){}
+  isLoggedIn: boolean = false
+  @Output() loginEvent = new EventEmitter<boolean>();
+  ngOnInit(): void {
+    google.accounts.id.initialize({
+      client_id: '977609391501-7sdlhq5dl17lpiug21cg1dllpe24a919.apps.googleusercontent.com',
+      callback: (resp: any) => this.handleLogin(resp)
+    })
+    google.accounts.id.renderButton(document.getElementById("login-btn"), {
+      type: 'icon',
+      size: 'large',
+      shape: 'rectangle',
+      width: 350
+    })
+  }
+  handleLogin(resp: any){
+    this.isLoggedIn = true
+    const jsonResp = JSON.parse(atob(resp.credential.split(".")[1]))
+    const name: String = jsonResp.name
+    const email: String = jsonResp.email
+    console.log(name, email)
+    const headers = new HttpHeaders({
+      'X-Special-Token': 'chandranvenkat'
+    });
+    const requestBody = {
+        "name": name,
+        "email": email
+    }
+    
+    this.isLoggedIn = true
+    this.loginEvent.emit(this.isLoggedIn)
+    this.http.post<any>('https://splashchemicals.in/check/api/login/get-tokens/', requestBody, {headers}).subscribe(
+      (response) => {
+        console.log(response)
+        sessionStorage.setItem('refresh', response.refresh)
+        sessionStorage.setItem('access', response.access)
       },
       (error) => {
-        // Handle authentication error
-        console.error('Authentication error', error);
+        console.error('Error occurred:', error);
       }
     );
-
+  }
+  aboutUs(){
+    console.log('in about us')
+    this.isLoggedIn = true
+    this.loginEvent.emit(this.isLoggedIn)
   }
 }
+

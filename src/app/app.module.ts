@@ -23,13 +23,15 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { PreviewComponent } from './preview/preview.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     Form1Component,
-    DashboardComponent
+    DashboardComponent,
+    PreviewComponent
   ],
   imports: [
     BrowserModule,

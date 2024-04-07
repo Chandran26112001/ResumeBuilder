@@ -1,11 +1,14 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { DatePipe } from '@angular/common';
+import { DatePipe, XhrFactory } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { fakeAsync } from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {FormBuilder, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { Router } from '@angular/router';
 import { flatMap } from 'rxjs';
+import { FormDataServiceService } from '../services/form-data-service.service';
+import { FormDataModel } from '../model/FormDataModel';
 
 @Component({
   selector: 'app-form1',
@@ -19,7 +22,30 @@ import { flatMap } from 'rxjs';
   ],
 })
 export class Form1Component implements OnInit {
-  constructor(private formBuilder: FormBuilder, private datePipe: DatePipe, private http: HttpClient){
+
+  formDataModel: FormDataModel = {
+    profile: {
+      first_name: '',
+      last_name: '',
+      location: '',
+      phone: '',
+      email: '',
+      linkedin_username: ''
+    },
+    educations: [],
+    experiences: [],
+    projects: [],
+    skills: [],
+    achievements: [],
+    profile_links: []
+  }
+
+  isLoggedIn: boolean = false
+  receiveBooleanValue(value: boolean){
+    console.log('value received, ', value)
+    this.isLoggedIn = value;
+  }
+  constructor(private formBuilder: FormBuilder, private datePipe: DatePipe, private http: HttpClient, private router: Router, private formDataService: FormDataServiceService){
   }
   requestBody:any = {
     profile: {},
@@ -50,6 +76,7 @@ export class Form1Component implements OnInit {
   canDeleteAchvDesc: boolean = false
   skillItems = ['Scientific Computing', 'Engineering Softwares', 'Programming Languages']
   ngOnInit(): void {
+    console.log('value of isLoggedIn, ', this.isLoggedIn)
     this.profileForm = new FormGroup({
       first_name: new FormControl(null, [Validators.required]),
       last_name: new FormControl(null, [Validators.required]),
@@ -71,7 +98,67 @@ export class Form1Component implements OnInit {
     //this.skillForm[0].valueChanges.subscribe(console.log)
     //this.profileForm.valueChanges.subscribe(console.log)
     //this.educationForm.forEach( x => x.valueChanges.subscribe(console.log) )
+    this.profileForm.patchValue({
+      "first_name": "sunni",
+        "last_name": "Smith",
+        "location": "New York, NY",
+        "phone": "2125550123",
+        "email": "jordan.smith@techmail.com",
+        "linkedin_username": "jordansmithNY"
+    })
+    const skillFormmm=[
+      {
+        "skill": "Scientific Computing",
+        "value": "MATLAB, Python (NumPy, SciPy), Wolfram Mathematica"
+    },
+    {
+        "skill": "Engineering Softwares",
+        "value": "SolidWorks, ANSYS Fluent, AutoCAD"
+    },
+    {
+        "skill": "Programming Languages",
+        "value": "Python, C++, Java"
+    }
+    ]
+    skillFormmm.forEach(xval=>{
+      const tempSkillForm = new FormGroup({
+        skill: new FormControl('', [Validators.required]),
+        value: new FormControl('', [Validators.required])
+      })
+      tempSkillForm.patchValue(xval)
+      this.skillForm.push(tempSkillForm)
+    })
+    const eduFormVal = [{
+      "institution": "University of California, Berkeley",
+      "location": "Berkeley, CA",
+      "course": 'df',
+      "duration": "Aug 2010 -- May 2014"
+  },
+  {
+      "institution": "Stanford University",
+      "location": "Stanford, CA",
+      "course": 'dfdada',
+      "duration": "Sep 2014 -- May 2016"
+  }]
+    eduFormVal.forEach(xval=>{
+      const tempEduForm = new FormGroup({
+        institution: new FormControl('', [Validators.required]),
+        location: new FormControl('', [Validators.required, Validators.pattern(/^[\w\s]+,\s*[\w\s]+$/)]),
+        degree: new FormControl('', [Validators.required]),
+        startDate: new FormControl(new Date, [Validators.required]),
+        endDate: new FormControl(new Date, [Validators.required])
+      })
+      tempEduForm.patchValue({
+        "institution": xval.institution,
+      "location": xval.location,
+      "degree": xval.course,
+      "startDate": getStartEndDate(xval.duration)[0],
+      "endDate": getStartEndDate(xval.duration)[1]
+      })
+      this.educationForm.push(tempEduForm)
+    })
   }
+
   isLinear = false; 
 
   //dummy
@@ -199,11 +286,15 @@ export class Form1Component implements OnInit {
   // after clicking next in each form
 
   profileFormNext(){
+    this.formDataModel.profile = this.profileForm.value
+    this.formDataService.formData = this.formDataModel
     this.requestBody.profile = this.profileForm.value
     console.log(JSON.stringify(this.requestBody))
+    console.log('haha', JSON.stringify(this.formDataModel))
   }
   educationFormNext(){
     this.educationForm.forEach(x=>{
+      this.formDataModel.educations.push(x.value)
       this.requestBody.educations.push( 
         {
           "institution": x.value.institution,
@@ -214,6 +305,7 @@ export class Form1Component implements OnInit {
        )
     })
     console.log(JSON.stringify(this.requestBody))
+    console.log('haha', JSON.stringify(this.formDataModel))
   }
   experienceFormNext(){
     this.experienceForm.forEach(x=>{
@@ -324,20 +416,34 @@ export class Form1Component implements OnInit {
   }
 
   seePreview(){
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
+    this.router.navigate(['/preview'])
+    // const headers = new HttpHeaders({
+    //   'Content-Type': 'application/json'
+    // });
 
-    this.http.post<any>('https://splashchemicals.in/check/api/resumes/generate-pdf/', this.requestBody, { headers, responseType: 'blob' as 'json' }).subscribe(
-      (response) => {
-        const file = new Blob([response], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL, '_blank');
-      },
-      (error) => {
-        console.error('Error occurred:', error);
-      }
-    );
+    // this.http.post<any>('https://splashchemicals.in/check/api/resumes/generate-pdf/', this.requestBody, { headers, responseType: 'blob' as 'json' }).subscribe(
+    //   (response) => {
+    //     const file = new Blob([response], { type: 'application/pdf' });
+    //     const fileURL = URL.createObjectURL(file);
+    //     window.open(fileURL, '_blank');
+    //   },
+    //   (error) => {
+    //     console.error('Error occurred:', error);
+    //   }
+    // );
   }
   
 }
+function getStartEndDate(duration: string): Date[] {
+  const monthMap: { [key: string]: number } = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 
+    'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
+  const durationParams = duration.split(' ')
+  var startAndEndDate: Date[] = [new Date(parseInt( durationParams[1],10),monthMap[durationParams[0]],1), 
+    new Date(parseInt( durationParams[4],10),monthMap[durationParams[3]],1)]
+  
+  
+  return startAndEndDate
+  //"Aug. 2010 -- May 2014"
+
+}
+

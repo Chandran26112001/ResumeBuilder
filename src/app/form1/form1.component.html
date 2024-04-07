@@ -1,4 +1,4 @@
-<app-dashboard></app-dashboard>
+<app-dashboard (loginEvent)="receiveBooleanValue($event)"></app-dashboard>
 
 <!-- <form [formGroup]="dummyForm">
   <ng-container formArrayName="dummyFormArray">
@@ -9,7 +9,7 @@
   </ng-container>
 </form> -->
 
-<mat-stepper orientation="vertical" [linear]="isLinear" #stepper>
+<mat-stepper *ngIf="isLoggedIn" orientation="vertical" [linear]="isLinear" #stepper>
     <mat-step [stepControl]="profileForm" errorMessage="Oops, Profile section is mandatory.">
       <div class="form-1">
         <form [formGroup]="profileForm">

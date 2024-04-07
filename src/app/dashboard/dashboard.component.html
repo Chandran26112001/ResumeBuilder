@@ -1,10 +1,3 @@
-<script>
-    // Check if the URL contains a specific parameter
-    if (window.location.search.includes('https://www.splashchemicals.in/check/api/login/callback')) {
-      // Close the popup window
-      window.close();
-    }
-</script>
 <mat-toolbar class="toolbar">
     <div class="content-left">
         <button mat-icon-button class="menu">
@@ -14,11 +7,12 @@
     </div>
     
     <div class="buttons-right">
-        <div>
-            <button (click)="onLogin()" class="login-button" mat-raised-button>Login</button>
+        <div style="font-size: large; margin-right: 5px;">
+            Sign in
         </div>
+            <button id="login-btn" class="login-button">Login</button>
         <div>
-            <button  mat-raised-button>About Us</button>
+            <button (click)="aboutUs()" mat-raised-button>About Us</button>
         </div>
     </div>
 </mat-toolbar>
